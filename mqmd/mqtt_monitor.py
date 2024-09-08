@@ -40,7 +40,7 @@ class MQTTMonitor:
         now = datetime.now()
         st_dir = os.path.join(STORAGE_DIR, now.strftime("%Y%m%d"))
         os.makedirs(st_dir,exist_ok=True)
-        file_name = os.path.join(st_dir,now.strftime("%H%M%S")+".mqtt")
+        file_name = os.path.join(st_dir,now.strftime("%H%M%S")+".txt")
         self.last_filetime = now.timestamp()
 
         # 新しいファイルをオープン
@@ -84,9 +84,11 @@ class MQTTMonitor:
         print("Connected with reason " + str(reasonCode))  # 接続できた旨表示
         # サブスクライブするトピック
         self.client.subscribe("mqmd/control") # 自分の制御用は常時 subscribe
+        self.start_subscribe()
 
         # ここでsubscribeするトピックを指定
     def start_subscribe(self):
+        print("Start Subscribe", "webxr/joint")
         self.client.subscribe("webxr/joint")
 
     def stop_subscribe(self):
@@ -119,7 +121,7 @@ class MQTTMonitor:
                 return
             
         # とりあえず、全部保存してみよう
-        self.write_storage(str(msg.timestamp)+"|"+msg.mid+"|"+msg.topic+"|"+msg.payload.decode())
+        self.write_storage(str(msg.timestamp)+"|"+msg.topic+"|"+msg.payload.decode())
 #        print("Message",msg.payload)
 #        js = json.loads(msg.payload)
 
@@ -138,12 +140,13 @@ class MQTTMonitor:
                 if startTime-ltime > dtime:
                     time.sleep(startTime-ltime-dtime)
 
-                self.client.publish(items[2],items[3])
+                self.client.publish(items[1],items[2])
         #終了したら、subscribeを再開
         self.start_subscribe()
  
 
     def connect_mqtt(self):
+        print("Connecting to MQTT Server:",MQTT_SERVER)
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)  
         self.client.on_connect = self.on_connect         # 接続時のコールバック関数を登録
         self.client.on_disconnect = self.on_disconnect   # 切断時のコールバックを登録
@@ -158,6 +161,12 @@ if __name__ == '__main__':
     mq = MQTTMonitor()
     mq.connect_mqtt()
 
-    while True:
-        time.sleep(5)
-        print(time.time(), mq.status, mq.count)
+    try:
+        while True:
+            time.sleep(5)
+            print(datetime.now(), mq.status, mq.count)
+    except KeyboardInterrupt:
+        print("Interrupted by Ctrl+C")
+        if mq.storage is not None:
+            mq.client.disconnect()
+            mq.storage.close()
