@@ -131,20 +131,26 @@ class MQTTMonitor:
         print("Play Start",file)
         startTime = time.time()
         dtime = 0
+        lastData =""#
         with open(file, 'r') as f:
             for line in f:
                 if self.playing == False:
                     break
                 items = line.split("|")
+                if items[2]==lastData:
+                    continue
+                lastData =items[2]
+                print(items[2])
+
                 ltime = float(items[0])
                 if dtime == 0:
                     dtime = startTime - ltime
                 print("Sleep",startTime, ltime, dtime, startTime-ltime-dtime)
                 if startTime-ltime < dtime:
-                    print("small",startTime, ltime, dtime, startTime-ltime-dtime)
+                    #print("small",startTime, ltime, dtime, startTime-ltime-dtime)
                     time.sleep(-(startTime-ltime-dtime))
                     dtime = startTime - ltime
-
+                print("Publish" ,lastData)
                 self.client.publish(items[1],items[2])
                 self.count += 1
         #終了したら、subscribeを再開
