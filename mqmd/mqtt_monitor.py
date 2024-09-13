@@ -93,7 +93,8 @@ class MQTTMonitor:
 
     def stop_subscribe(self):
         self.client.unsubscribe("webxr/joint")
-        self.storage.close()
+        if self.storage is not None:
+            self.storage.close()
         self.storage = None
         self.status = "Stop Subscribe"
         self.last_filetime = 0

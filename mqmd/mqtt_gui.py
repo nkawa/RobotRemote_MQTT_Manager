@@ -42,7 +42,7 @@ class MQTTWin(object):
         self.spbutton.grid(row=0,column=5,padx=2,pady=10)
 
 
-        self.spbutton = Button(self.root, text="PLay MQTT", padx=5,
+        self.spbutton = Button(self.root, text="Play MQTT", padx=5,
                              command=self.play_mqtt)
         self.spbutton.grid(row=1,column=0,padx=2,pady=10)
 
@@ -50,6 +50,10 @@ class MQTTWin(object):
         self.entry = tk.Entry()  # テキストボックスを生成
         self.entry.grid(row=1, column=1,padx=2, pady=10)  # テキストボックスを配置
 
+
+        self.spbutton = Button(self.root, text="Stop Play", padx=5,
+                             command=self.stop_play)
+        self.spbutton.grid(row=1,column=2,padx=2,pady=10)
 
 #        self.enable.grid(row=0,column=2,padx=2,pady=10)
 
@@ -138,6 +142,10 @@ class MQTTWin(object):
 
         self.client.publish("mqmd/control",jscommand)
         self.log_txt("Play MQTT Recording File "+self.entry.get()+"\n")
+
+    def stop_play(self):
+        self.client.publish("mqmd/control","{\"command\":\"playStop\"}")
+        self.log_txt("Stop Play MQTT Recording\n")
 
 # ブローカーに接続できたときの処理
     def on_connect(self,client, userdata, flag, rc):
