@@ -21,7 +21,7 @@ MAX_RECONNECT_DELAY = 60
 
 STORAGE_DIR = "storage"
 
-SEPARATE_FILE_SEC = 50   # 2分ごとにファイルを分ける
+SEPARATE_FILE_SEC = 50   # ５０秒ごとにファイルを分ける
 
 class MQTTMonitor:
     def __init__(self):
@@ -96,6 +96,7 @@ class MQTTMonitor:
         self.storage.close()
         self.storage = None
         self.status = "Stop Subscribe"
+        self.last_filetime = 0
 
 # ここに保存
     def on_message(self,client, userdata, msg):
