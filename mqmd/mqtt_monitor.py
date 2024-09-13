@@ -140,6 +140,7 @@ class MQTTMonitor:
                 if dtime == 0:
                     dtime = startTime - ltime
                 if startTime-ltime > dtime:
+                    print("Sleep",startTime, ltime, dtime, startTime-ltime-dtime)
                     time.sleep(startTime-ltime-dtime)
 
                 self.client.publish(items[1],items[2])
