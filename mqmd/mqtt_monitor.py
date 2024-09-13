@@ -21,7 +21,7 @@ MAX_RECONNECT_DELAY = 60
 
 STORAGE_DIR = "storage"
 
-SEPARATE_FILE_SEC = 120   # 2分ごとにファイルを分ける
+SEPARATE_FILE_SEC = 50   # 2分ごとにファイルを分ける
 
 class MQTTMonitor:
     def __init__(self):
@@ -44,7 +44,7 @@ class MQTTMonitor:
         self.last_filetime = now.timestamp()
 
         # 新しいファイルをオープン
-        self.storage = open( file_name, 'w',buffering=1024*1024, newline='')
+        self.storage = open( file_name, 'w',buffering=1024*512, newline='')
 
         # -> ここで、RRMQM Webサーバに、新しいfileができたことを通知してもいいかも。
         self.client.publish("mqmd/storage",file_name)
