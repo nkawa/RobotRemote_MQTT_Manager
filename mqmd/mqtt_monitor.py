@@ -143,6 +143,7 @@ class MQTTMonitor:
                 if startTime-ltime < dtime:
                     print("small",startTime, ltime, dtime, startTime-ltime-dtime)
                     time.sleep(-(startTime-ltime-dtime))
+                    dtime = startTime - ltime
 
                 self.client.publish(items[1],items[2])
                 self.count += 1
