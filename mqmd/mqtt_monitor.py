@@ -139,6 +139,7 @@ class MQTTMonitor:
                 ltime = float(items[0])
                 if dtime == 0:
                     dtime = startTime - ltime
+                print("Sleep",startTime, ltime, dtime, startTime-ltime-dtime)
                 if startTime-ltime > dtime:
                     print("Sleep",startTime, ltime, dtime, startTime-ltime-dtime)
                     time.sleep(startTime-ltime-dtime)
@@ -146,6 +147,7 @@ class MQTTMonitor:
                 self.client.publish(items[1],items[2])
                 self.count += 1
         #終了したら、subscribeを再開
+        print("End playing")
         self.start_subscribe()
  
 
