@@ -143,6 +143,7 @@ class MQTTMonitor:
                     time.sleep(startTime-ltime-dtime)
 
                 self.client.publish(items[1],items[2])
+                self.count += 1
         #終了したら、subscribeを再開
         self.start_subscribe()
  
