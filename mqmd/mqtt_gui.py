@@ -42,6 +42,15 @@ class MQTTWin(object):
         self.spbutton.grid(row=0,column=5,padx=2,pady=10)
 
 
+        self.spbutton = Button(self.root, text="PLay MQTT", padx=5,
+                             command=self.play_mqtt)
+        self.spbutton.grid(row=1,column=0,padx=2,pady=10)
+
+
+        self.entry = tk.Entry()  # テキストボックスを生成
+        self.entry.grid(row=1, column=1,padx=2, pady=10)  # テキストボックスを配置
+
+
 #        self.enable.grid(row=0,column=2,padx=2,pady=10)
 
 #        self.mv4button.grid(row=0,column=6,padx=2,pady=10)
@@ -52,7 +61,7 @@ class MQTTWin(object):
 
         self.info_frame = LabelFrame(self.root, text="info", labelanchor="nw",
                                      bg="#FFFFFF", width=550, height=150)
-        self.info_frame.grid(row=1, column=0, padx=5,pady=5,columnspan=8)
+        self.info_frame.grid(row=3, column=0, padx=5,pady=5,columnspan=8)
 
         self.label_mqtt_mode = Label(self.info_frame, text="")
         self.label_mqtt_mode.place(rely=0.1, x=10)
@@ -117,6 +126,18 @@ class MQTTWin(object):
         json_data = json.dumps(dt)
         response = requests.post("http://192.168.5.254:3000", data=json_data, headers=header)
         self.log_txt(response.text)
+
+    def play_mqtt(self):
+        fname = self.entry.get()
+        print("Fname",fname)
+        command = {
+            "command":"play",
+            "file": fname
+        }
+        jscommand = json.dumps(command)
+
+        self.client.publish("mqmd/control",jscommand)
+        self.log_txt("Play MQTT Recording File "+self.entry.get()+"\n")
 
 # ブローカーに接続できたときの処理
     def on_connect(self,client, userdata, flag, rc):
