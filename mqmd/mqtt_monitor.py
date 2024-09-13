@@ -133,16 +133,16 @@ class MQTTMonitor:
         dtime = 0
         with open(file, 'r') as f:
             for line in f:
-                if self.play_start == False:
+                if self.playing == False:
                     break
                 items = line.split("|")
                 ltime = float(items[0])
                 if dtime == 0:
                     dtime = startTime - ltime
                 print("Sleep",startTime, ltime, dtime, startTime-ltime-dtime)
-                if startTime-ltime > dtime:
-                    print("Sleep",startTime, ltime, dtime, startTime-ltime-dtime)
-                    time.sleep(startTime-ltime-dtime)
+                if startTime-ltime < dtime:
+                    print("small",startTime, ltime, dtime, startTime-ltime-dtime)
+                    time.sleep(-(startTime-ltime-dtime))
 
                 self.client.publish(items[1],items[2])
                 self.count += 1
